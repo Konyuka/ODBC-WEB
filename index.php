@@ -28,8 +28,8 @@
     </style>
 </head>
 
-<body>
-    <div class="container" id="crudApp">
+<body class="overflow-auto">
+    <div class="container overflow-auto" id="crudApp">
         <br />
         <h3 align="center">Insert & Read to-from MS Access using MYSQL ODBC Driver</h3>
         <br />
@@ -66,46 +66,12 @@
             </div>
         </div>
 
-        <br>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h3 class="panel-title">Patients List</h3>
-                    </div>
-                    <div class="col-md-6" align="right">
-                        <input type="button" class="btn btn-success btn-xs" @click="openModel" value="Add" />
-                    </div>
-                </div>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <tr>
-                            <th>Full Name</th>
-                            <th>Phone Number</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                        <tr v-for="row in patient">
-                            <td>{{ row.name }}</td>
-                            <td>{{ row.phone }}</td>
-                            <td><button type="button" name="edit" class="btn btn-primary btn-xs edit"
-                                    @click="fetchData(row.id)">Edit</button></td>
-                            <td><button type="button" name="delete" class="btn btn-danger btn-xs delete"
-                                    @click="deleteData(row.id)">Delete</button></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
         <div v-if="myModel">
             <transition name="model">
-                <div class="modal-mask">
-                    <div class="modal-wrapper">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                <div class="modal-mask overflow-auto">
+                    <div class="modal-wrapper overflow-auto">
+                        <div class="modal-dialog overflow-auto">
+                            <div class="modal-content overflow-auto">
                                 <div class="modal-header">
                                     <button type="button" class="close" @click="myModel=false"><span
                                             aria-hidden="true">&times;</span></button>
@@ -113,22 +79,30 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <label>Enter Name</label>
-                                        <input type="text" class="form-control" v-model="name" />
+                                        <input type="text" class="form-control" v-model="surname" placeholder="surname"/>
                                     </div>
                                     <div class="form-group">
-                                        <label>Enter Phone</label>
-                                        <input type="text" class="form-control" v-model="phone" />
+                                        <input type="text" class="form-control" v-model="middlename"  placeholder=" Middle name"/>
                                     </div>
                                     <div class="form-group">
-                                        <label>User Role</label>
-                                        <select class="form-select" v-model="role" aria-label="Default select example">
-                                            <option selected>Select User Role</option>
-                                            <option value="1">Doctor</option>
-                                            <option value="2">Patient</option>
-                                        </select>
-                                        <!-- <input type="text" class="form-control" v-model="phone" /> -->
+                                        <input type="text" class="form-control" v-model="firstname" placeholder="First Name "/>
                                     </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" v-model="course" placeholder=" course"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" v-model="age" placeholder=" age"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" v-model="guardian"  placeholder=" guardian"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" v-model="phone" placeholder="phone"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" v-model="regno" placeholder="regno" />
+                                    </div>
+                                    
                                     <br />
                                     <div align="center">
                                         <input type="hidden" v-model="hiddenId" />
@@ -177,75 +151,46 @@
                 });
             },
             openModel: function () {
-                application.name = '';
+                application.surname = '';
+                application.middlename = '';
+                application.firstname = '';
+                application.course = '';
+                application.age = '';
+                application.guardian = '';
                 application.phone = '';
+                application.regno = '';
                 application.actionButton = "Insert";
                 application.dynamicTitle = "Add Data";
                 application.myModel = true;
             },
             submitData: function () {
-                if (application.name != '' && application.phone != '' && application.role != '') {
+                if (application.regno != '') {
                     if (application.actionButton == 'Insert') {
                         axios.post('action.php', {
                             action: 'insert',
-                            name: application.name,
+                            surname: application.surname,
+                            middlename: application.middlename,
+                            firstname: application.firstname,
+                            course: application.course,
+                            age: application.age,
+                            guardian: application.guardian,
                             phone: application.phone,
-                            role: application.role
+                            regno: application.regno
                         }).then(function (response) {
                             application.myModel = false;
                             application.fetchAllData();
-                            application.name = '';
+                            application.surname = '';
+                            application.middlename = '';
+                            application.firstname = '';
+                            application.course = '';
+                            application.age = '';
+                            application.guardian = '';
                             application.phone = '';
-                            application.role = '';
+                            application.regno = '';
                             alert(response.data.message);
                         });
-                    }
-                    if (application.actionButton == 'Update') {
-                        axios.post('action.php', {
-                            action: 'update',
-                            name: application.name,
-                            phone: application.phone,
-                            role: application.phone,
-                            hiddenId: application.hiddenId
-                        }).then(function (response) {
-                            application.myModel = false;
-                            application.fetchAllData();
-                            application.name = '';
-                            application.phone = '';
-                            application.role = '';
-                            application.hiddenId = '';
-                            alert(response.data.message);
-                        });
-                    }
-                }
-                else {
-                    alert("Fill All Field");
-                }
+                    }}
             },
-            fetchData: function (id) {
-                axios.post('action.php', {
-                    action: 'fetchSingle',
-                    id: id
-                }).then(function (response) {
-                    application.name = response.data.name;
-                    application.phone = response.data.phone;
-                    application.hiddenId = response.data.id;
-                    application.myModel = true;
-                    application.actionButton = 'Update';
-                    application.dynamicTitle = 'Edit Data';
-                });
-            },
-            deleteData: function (id) {
-                if (confirm("Are you sure you want to remove this data?")) {
-                    axios.post('action.php', {
-                        action: 'delete',
-                        id: id
-                    }).then(function (response) {
-                        application.fetchAllData();
-                        alert(response.data.message);
-                    });
-                }
-            }
         },
         created: function () {
             this.fetchAllData();

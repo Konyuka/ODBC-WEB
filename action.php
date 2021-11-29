@@ -2,14 +2,14 @@
 
 //action.php
 
-$connect = new PDO("mysql:host=localhost;dbname=hossy", "root", "");
+$connect = new PDO("mysql:host=localhost;dbname=kca", "root", "");
 $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
 if($received_data->action == 'fetchall')
 {
  $query = "
- SELECT * FROM users 
- ORDER BY name DESC
+ SELECT * FROM students 
+ ORDER BY surname DESC
  ";
  $statement = $connect->prepare($query);
  $statement->execute();
@@ -22,15 +22,19 @@ if($received_data->action == 'fetchall')
 if($received_data->action == 'insert')
 {
  $data = array(
-  ':name' => $received_data->name,
+  ':surname' => $received_data->surname,
+  ':middlename' => $received_data->middlename,
+  ':firstname' => $received_data->firstname,
+  ':age' => $received_data->age,
+  ':guardian' => $received_data->guardian,
   ':phone' => $received_data->phone,
-  ':role' => $received_data->role
+  ':regno' => $received_data->regno,
  );
 
  $query = "
  INSERT INTO users 
- (name, phone, role) 
- VALUES (:name, :phone, :role)
+ (Surname, Middle Name, First Name, Age, Guardian, Telephone Number, Reg_No) 
+ VALUES (:surname, :middlename, :firstname, :age, :guardian, :phone, :regno )
  ";
 
  $statement = $connect->prepare($query);
@@ -43,70 +47,4 @@ if($received_data->action == 'insert')
 
  echo json_encode($output);
 }
-if($received_data->action == 'fetchSingle')
-{
- $query = "
- SELECT * FROM tbl_sample 
- WHERE id = '".$received_data->id."'
- ";
-
- $statement = $connect->prepare($query);
-
- $statement->execute();
-
- $result = $statement->fetchAll();
-
- foreach($result as $row)
- {
-  $data['id'] = $row['id'];
-  $data['first_name'] = $row['first_name'];
-  $data['last_name'] = $row['last_name'];
- }
-
- echo json_encode($data);
-}
-if($received_data->action == 'update')
-{
- $data = array(
-  ':first_name' => $received_data->firstName,
-  ':last_name' => $received_data->lastName,
-  ':id'   => $received_data->hiddenId
- );
-
- $query = "
- UPDATE tbl_sample 
- SET first_name = :first_name, 
- last_name = :last_name 
- WHERE id = :id
- ";
-
- $statement = $connect->prepare($query);
-
- $statement->execute($data);
-
- $output = array(
-  'message' => 'Data Updated'
- );
-
- echo json_encode($output);
-}
-
-if($received_data->action == 'delete')
-{
- $query = "
- DELETE FROM tbl_sample 
- WHERE id = '".$received_data->id."'
- ";
-
- $statement = $connect->prepare($query);
-
- $statement->execute();
-
- $output = array(
-  'message' => 'Data Deleted'
- );
-
- echo json_encode($output);
-}
-
 ?>
