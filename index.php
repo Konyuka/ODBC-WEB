@@ -31,13 +31,13 @@
 <body class="overflow-auto">
     <div class="container overflow-auto" id="crudApp">
         <br />
-        <h3 align="center">Insert & Read to-from MS Access using MYSQL ODBC Driver</h3>
+        <h3 align="center">READ FROM MYSQL DB USING PHP & JS</h3>
         <br />
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-md-6">
-                        <h3 class="panel-title">Doctors List</h3>
+                        <h3 class="panel-title">Employees List</h3>
                     </div>
                     <div class="col-md-6" align="right">
                         <input type="button" class="btn btn-success btn-xs" @click="openModel" value="Add" />
@@ -48,14 +48,16 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <tr>
-                            <th>Full Name</th>
-                            <th>Phone Number</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Position</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
-                        <tr v-for="row in doctor">
-                            <td>{{ row.name }}</td>
-                            <td>{{ row.phone }}</td>
+                        <tr v-for="row in allData">
+                            <td>{{ row.first }}</td>
+                            <td>{{ row.last }}</td>
+                            <td>{{ row.position }}</td>
                             <td><button type="button" name="edit" class="btn btn-primary btn-xs edit"
                                     @click="fetchData(row.id)">Edit</button></td>
                             <td><button type="button" name="delete" class="btn btn-danger btn-xs delete"
@@ -79,29 +81,18 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" v-model="surname" placeholder="surname"/>
+                                        <input type="text" class="form-control" v-model="first" placeholder="first"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" v-model="middlename"  placeholder=" Middle name"/>
+                                        <input type="text" class="form-control" v-model="last"  placeholder="last"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" v-model="firstname" placeholder="First Name "/>
+                                        <input type="text" class="form-control" v-model="address" placeholder="address"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" v-model="course" placeholder=" course"/>
+                                        <input type="text" class="form-control" v-model="position" placeholder=" position"/>
                                     </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" v-model="age" placeholder=" age"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" v-model="guardian"  placeholder=" guardian"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" v-model="phone" placeholder="phone"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" v-model="regno" placeholder="regno" />
-                                    </div>
+
                                     
                                     <br />
                                     <div align="center">
@@ -140,25 +131,13 @@
                 }).then(function (response) {
                     console.log(response.data)
                     application.allData = response.data;
-                    for(var i = 0; i <= this.application.allData.length; i++) {
-                        this.application.doctor = this.application.allData.filter(i=>i.role == 1)
-                    }
-                    for(var i = 0; i <= this.application.allData.length; i++) {
-                        this.application.patient = this.application.allData.filter(i=>i.role == 2)
-                    }
-                    console.log(this.doctor)
-                    console.log(this.patient)
                 });
             },
             openModel: function () {
-                application.surname = '';
-                application.middlename = '';
-                application.firstname = '';
-                application.course = '';
-                application.age = '';
-                application.guardian = '';
-                application.phone = '';
-                application.regno = '';
+                application.first = '';
+                application.last = '';
+                application.address = '';
+                application.position = '';
                 application.actionButton = "Insert";
                 application.dynamicTitle = "Add Data";
                 application.myModel = true;
@@ -168,25 +147,17 @@
                     if (application.actionButton == 'Insert') {
                         axios.post('action.php', {
                             action: 'insert',
-                            surname: application.surname,
-                            middlename: application.middlename,
-                            firstname: application.firstname,
-                            course: application.course,
-                            age: application.age,
-                            guardian: application.guardian,
-                            phone: application.phone,
-                            regno: application.regno
+                            position: application.position,
+                            address: application.address,
+                            last: application.last,
+                            first: application.first,
                         }).then(function (response) {
                             application.myModel = false;
                             application.fetchAllData();
-                            application.surname = '';
-                            application.middlename = '';
-                            application.firstname = '';
-                            application.course = '';
-                            application.age = '';
-                            application.guardian = '';
-                            application.phone = '';
-                            application.regno = '';
+                            application.first = '';
+                            application.last = '';
+                            application.address = '';
+                            application.position = '';
                             alert(response.data.message);
                         });
                     }}

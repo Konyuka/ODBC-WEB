@@ -2,14 +2,15 @@
 
 //action.php
 
-$connect = new PDO("mysql:host=localhost;dbname=kca", "root", "");
+$connect = new PDO("mysql:host=localhost;dbname=mydb", "root", "");
 $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
+
 if($received_data->action == 'fetchall')
 {
  $query = "
- SELECT * FROM students 
- ORDER BY surname DESC
+ SELECT * FROM employees 
+ ORDER BY first DESC
  ";
  $statement = $connect->prepare($query);
  $statement->execute();
@@ -19,22 +20,20 @@ if($received_data->action == 'fetchall')
  }
  echo json_encode($data);
 }
+
 if($received_data->action == 'insert')
 {
  $data = array(
-  ':surname' => $received_data->surname,
-  ':middlename' => $received_data->middlename,
-  ':firstname' => $received_data->firstname,
-  ':age' => $received_data->age,
-  ':guardian' => $received_data->guardian,
-  ':phone' => $received_data->phone,
-  ':regno' => $received_data->regno,
+  ':first' => $received_data->first,
+  ':last' => $received_data->last,
+  ':address' => $received_data->address,
+  ':position' => $received_data->position
  );
 
  $query = "
  INSERT INTO users 
- (Surname, Middle Name, First Name, Age, Guardian, Telephone Number, Reg_No) 
- VALUES (:surname, :middlename, :firstname, :age, :guardian, :phone, :regno )
+ (Surname, first, last, address, position) 
+ VALUES (:first, :last, :address, :position)
  ";
 
  $statement = $connect->prepare($query);
